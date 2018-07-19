@@ -27,7 +27,7 @@
 void resetForTest(struct gameState *game, struct gameState *pre) {
 
 	// set the kingdom cards being used
-	int k[10] = {adventurer, gardens, embargo, adventurer, minion, mine, cutpurse, sea_hag, tribute, adventurer};	
+	int k[10] = {smithy, gardens, embargo, village, minion, mine, cutpurse, sea_hag, tribute, adventurer};	
 	// initialize the game
 	initializeGame(4,k,23,game);
 	
