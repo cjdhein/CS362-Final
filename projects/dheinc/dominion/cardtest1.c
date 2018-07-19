@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 		assertLite(__LINE__,memcmp(game->discard[i],pre->discard[i],sizeof(int)* (int) pre->discardCount[i]),0,1);
 	}
 
-	// test 2 - confirm player has same number of cards (none lost / none gained)
+	// test 2 - confirm player has same number of cards (none removed from game or added)
 	resetForTest(game, pre);
 	smithyPos = game->handCount[0]-1;
 	cardEffect(smithy,-1,-1,-1,game,smithyPos,NULL);
