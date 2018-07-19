@@ -971,7 +971,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case great_hall:
-		playGreatHall(currentPlayer, *state, handPos); 
+		playGreatHall(currentPlayer, state, handPos); 
 		return 0;
 		
     case minion:
