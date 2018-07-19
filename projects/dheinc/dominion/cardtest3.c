@@ -93,12 +93,62 @@ int main(int argc, char *argv[]) {
 
 #if NOISY_TEST
 		printf("\nChecking if village is still in hand\n");
-#endif
+#endif 
 	for (int i = 0; i < game->handCount[0];i++){
 		assertLite(__LINE__,(game->hand[i]),village,0); // confirm village is no longer in the hand
 	}
 
-	int ret;
+
+	// test 4 - was the player's action count increased by 2?
+	resetForTest(game, pre);
+	villagePos = game->handCount[0]-1;
+	cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+#if NOISY_TEST
+		printf("\nChecking if numActions increased by 2...\n");
+#endif
+	assertLite(__LINE__,(game->numActions - pre->numActions),2,1);
+
+	// test 5 - was a card added to the hand and removed from the deck
+	//	- deckCount drops by 1 card
+	//	- handCount stays the same (accounting for village being removed)
+	resetForTest(game, pre);
+	villagePos = game->handCount[0]-1;
+	cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+
+#if NOISY_TEST
+	printf("\nChecking for deckCount decrease by three...\n");
+#endif
+	assertLite(__LINE__,(pre->deckCount[0] - game->deckCount[0]),3,1);
+#if NOISY_TEST
+	printf("\nChecking for handCount increase by two...\n");
+#endif
+	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),2,1);
+ 
+	// test 6 - ensure supply was not affected
+	// memory state of supply is same now as before
+	resetForTest(game, pre);
+	villagePos = game->handCount[0]-1;
+	cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+
+#if NOISY_TEST
+	printf("\nChecking for no change in supply...\n");
+#endif
+	assertLite(__LINE__,memcmp(game->supplyCount,pre->supplyCount,(sizeof(int)*(treasure_map+1))),0,1);
+
+	// test 7 - confirm scores for all players are unchanged
+	resetForTest(game, pre);
+	villagePos = game->handCount[0]-1;
+	cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+
+	for(int i = 0; i < 4;i++) {
+#if NOISY_TEST
+		printf("\nChecking score unchanged for player %d.\n",i+1);
+#endif
+		assertLite(__LINE__,scoreFor(i,game),scoreFor(i,pre),1);
+	}
+
+
+
 	return 0;
 }
 
