@@ -684,7 +684,7 @@ int playAdventurer(int currentPlayer, int drawntreasure, struct gameState *state
 			drawntreasure++;
 		else {
 			temphand[z]=cardDrawn;
-			state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
+			//state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
 			z++;
 		}
 	}
@@ -759,8 +759,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
   switch( card ) 
     {
     case adventurer:
-		playAdventurer(currentPlayer, drawntreasure, state, temphand, z, cardDrawn);
-		return 0;
+		return (playAdventurer(currentPlayer, drawntreasure, state, temphand, z, cardDrawn));
 			
     case council_room:
       //+4 Cards
@@ -905,14 +904,11 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 		
     case smithy:
       //+3 Cards
-	  playSmithy(currentPlayer, state, handPos);
-      return 0;
+      return (playSmithy(currentPlayer, state, handPos));
 		
     case village:
-	  playVillage(currentPlayer,state,handPos);
-    
-      return 0;
-		
+	  return(playVillage(currentPlayer,state,handPos));
+    		
     case baron:
       state->numBuys++;//Increase buys by 1!
       if (choice1 > 0){//Boolean true or going to discard an estate
@@ -965,8 +961,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case great_hall:
-		playGreatHall(currentPlayer, state, handPos); 
-		return 0;
+		return (playGreatHall(currentPlayer, state, handPos));
 		
     case minion:
       //+1 action
@@ -1020,8 +1015,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case steward:
-		playSteward(choice1, choice2, choice3, currentPlayer, state, handPos);
-		return 0;
+		return (playSteward(choice1, choice2, choice3, currentPlayer, state, handPos));
 		
     case tribute:
       if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1){

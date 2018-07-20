@@ -1,15 +1,15 @@
 /*
- * cardtest3.c
+ * cardtest4.c
  *
- * Card being tested:	Village
+ * Card being tested:	great_hall
  *
- * Card's Function:		Draws a single card and gives player 2 additional actions.
+ * Card's Function:		Draws a single card and gives player 1 additional action; also worth 1 VP.
  *
  * 
  * Include in makefile:
  *
- * cardtest3: cardtest3.c dominion.o rngs.o testutils.o
- *      gcc -o cardtest3 -g cardtest3.c dominion.o rngs.o testutils.o $(CFLAGS)
+ * cardtest4: cardtest4.c dominion.o rngs.o testutils.o
+ *      gcc -o cardtest4 -g cardtest4.c dominion.o rngs.o testutils.o $(CFLAGS)
  *
  */
 
@@ -29,16 +29,24 @@ int main(int argc, char *argv[]) {
 	struct gameState *pre;
 	game = newGame();
 	pre = newGame();
-	int villagePos;
+	int great_hallPos;
 	int preCardCount;
 	int cardCount;	
 	int ret;
 
-	// test 1 - confirm other players were not affected
+	// test 1 - confirm Great Hall is worth 1 victory point
+	//	- get score with no cards and after adding great hall
+	game->hand[0][0] = great_hall;
+#if NOISY_TEST
+		printf("\nChecking for player score of 1 more than pre\n");
+#endif	
+	assertLite(__LINE__,(scoreFor(0,game) - scoreFor(0,pre)), 1, 1);
+
+	// test 2 - confirm other players were not affected
 	//	- no new cards added, no cards removed etc
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
@@ -54,10 +62,10 @@ int main(int argc, char *argv[]) {
 		assertLite(__LINE__,memcmp(game->discard[i],pre->discard[i],sizeof(int)* (int) pre->discardCount[i]),0,1);
 	}	
 
-	// test 2 - confirm player has same number of cards in hand+deck+discard
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	// test 3 - confirm player has same number of cards in hand+deck+discard
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
@@ -70,12 +78,12 @@ int main(int argc, char *argv[]) {
 	cardCount = game->deckCount[0] + game->handCount[0] + game->discardCount[0];  
 	assertLite(__LINE__,preCardCount,cardCount,1);
 
-	// test 3 - is village card discarded properly?
+	// test 4 - is great_hall card discarded properly?
 	//	- card leaves hand
 	//	- card ends up in discard
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
@@ -86,57 +94,58 @@ int main(int argc, char *argv[]) {
 #endif
 	assertLite(__LINE__,(game->discardCount[0] - pre->discardCount[0]),1,1); // assert new discardCount - old is equal to 1
 #if NOISY_TEST
-	printf("\nChecking if village is the latest card in discard\n");
+	printf("\nChecking if great_hall is the latest card in discard\n");
 #endif
-	assertLite(__LINE__,(*game->discard[game->discardCount[0]-1]),village,1); // assert the latest card in the discard pile is village
+	assertLite(__LINE__,(*game->discard[game->discardCount[0]-1]),great_hall,1); // assert the latest card in the discard pile is great_hall
 
 #if NOISY_TEST
-		printf("\nChecking if village is still in hand\n");
+		printf("\nChecking if great_hall is still in hand\n");
 #endif 
 	for (int i = 0; i < game->handCount[0];i++){
-		assertLite(__LINE__,(*game->hand[i]),village,0); // confirm village is no longer in the hand
+		assertLite(__LINE__,(*game->hand[i]),great_hall,0); // confirm great_hall is no longer in the hand
 	}
 
 
-	// test 4 - was the player's action count increased by 2?
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	// test 5 - was the player's action count increased by 1?
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
 	assertLite(__LINE__,ret,0,1);
 	
 #if NOISY_TEST
-		printf("\nChecking if numActions increased by 2...\n");
+		printf("\nChecking if numActions increased by 1...\n");
 #endif
-	assertLite(__LINE__,(game->numActions - pre->numActions),2,1);
+	assertLite(__LINE__,(game->numActions - pre->numActions),1,1);
 
-	// test 5 - was a card added to the hand and removed from the deck
+	// test 6 - was a card added to the hand and removed from the deck
 	//	- deckCount drops by 1 card
-	//	- handCount stays the same (accounting for village being removed)
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	//	- handCount stays the same (accounting for great_hall being removed)
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
 	assertLite(__LINE__,ret,0,1);
+	
 
 #if NOISY_TEST
-	printf("\nChecking for deckCount decrease by three...\n");
+	printf("\nChecking for deckCount decreasse by 1...\n");
 #endif
-	assertLite(__LINE__,(pre->deckCount[0] - game->deckCount[0]),3,1);
+	assertLite(__LINE__,(pre->deckCount[0] - game->deckCount[0]),1,1);
 #if NOISY_TEST
-	printf("\nChecking for handCount increase by two...\n");
+	printf("\nChecking for handCount being the same...\n");
 #endif
-	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),2,1);
+	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),0,1);
  
-	// test 6 - ensure supply was not affected
+	// test 7 - ensure supply was not affected
 	// memory state of supply is same now as before
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
@@ -147,15 +156,14 @@ int main(int argc, char *argv[]) {
 #endif
 	assertLite(__LINE__,memcmp(game->supplyCount,pre->supplyCount,(sizeof(int)*(treasure_map+1))),0,1);
 
-	// test 7 - confirm scores for all players are unchanged
-	resetForTest(game, pre, village);
-	villagePos = game->handCount[0]-1;
-	ret = cardEffect(village,-1,-1,-1,game,villagePos,NULL);
+	// test 8 - confirm scores for all players are unchanged
+	resetForTest(game, pre, great_hall);
+	great_hallPos = game->handCount[0]-1;
+	ret = cardEffect(great_hall,-1,-1,-1,game,great_hallPos,NULL);
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
 	assertLite(__LINE__,ret,0,1);
-
 
 	for(int i = 0; i < 4;i++) {
 #if NOISY_TEST
