@@ -124,13 +124,13 @@ int main(int argc, char *argv[]) {
 	assertLite(__LINE__,ret,0,1);
 
 #if NOISY_TEST
-	printf("\nChecking for deckCount decrease by three...\n");
+	printf("\nChecking for deckCount decrease by one...\n");
 #endif
-	assertLite(__LINE__,(pre->deckCount[0] - game->deckCount[0]),3,1);
+	assertLite(__LINE__,(pre->deckCount[0] - game->deckCount[0]),1,1);
 #if NOISY_TEST
-	printf("\nChecking for handCount increase by two...\n");
+	printf("\nChecking for handCount increase by zero...\n");
 #endif
-	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),2,1);
+	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),0,1);
  
 	// test 6 - ensure supply was not affected
 	// memory state of supply is same now as before

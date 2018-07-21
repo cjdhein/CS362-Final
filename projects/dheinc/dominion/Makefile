@@ -34,16 +34,57 @@ runtests: testDrawCard
 	cat dominion.c.gcov >> unittestresult.out
 
 unittestresults: unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4
-	./unittest1 > unittestresults.out
+	echo "" > unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Unit Test 1" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	./unittest1 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Unit Test 2" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	./unittest2 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Unit Test 3" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	./unittest3 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Unit Test 4" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	./unittest4 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Card Test 1" >>unittestresults.out
+	echo "***********" >> unittestresults.out
 	./cardtest1 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Card Test 2" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	./cardtest2 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Card Test 3" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	./cardtest3 >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "Card Test 4" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	./cardtest4 >> unittestresults.out
-	gcov dominion.c >> unittestresults.out
+	gcov dominion.c
+	echo "" >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "***********" >> unittestresults.out
 	cat dominion.c.gcov >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "***********" >> unittestresults.out
+	echo "" >> unittestresults.out
+	echo "" >> unittestresults.out
+	gcov dominion >> unittestresults.out
 
 unittest1: unittest1.c dominion.o rngs.o testutils.o
 	gcc -o unittest1 -g unittest1.c dominion.o rngs.o testutils.o $(CFLAGS)
