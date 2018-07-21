@@ -19,7 +19,7 @@
 #include "testutils.h"
 
 // set NOISY_TEST to 0 to remove printfs from output
-#define NOISY_TEST 1
+#define NOISY_TEST 0
 
 void test2(struct gameState* game){
 		for(int i=0; i <= treasure_map;i++){

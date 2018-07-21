@@ -684,7 +684,7 @@ int playAdventurer(int currentPlayer, int drawntreasure, struct gameState *state
 			drawntreasure++;
 		else {
 			temphand[z]=cardDrawn;
-	// BUG!		state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
+			//state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
 			z++;
 		}
 	}
@@ -727,7 +727,7 @@ int playVillage(int currentPlayer, struct gameState *state, int handPos) {
       //+1 Card
       drawCard(currentPlayer, state);
 			
-      //+2 Actions BUG! only adds 1
+      //+2 Actions BUG! only adds 1 whoops, none!
       state->numActions = state->numActions++;
 			
       //discard played card from hand
@@ -759,8 +759,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
   switch( card ) 
     {
     case adventurer:
-		playAdventurer(currentPlayer, drawntreasure, state, temphand, z, cardDrawn);
-		return 0;
+		return (playAdventurer(currentPlayer, drawntreasure, state, temphand, z, cardDrawn));
 			
     case council_room:
       //+4 Cards
@@ -905,20 +904,11 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 		
     case smithy:
       //+3 Cards
-	  playSmithy(currentPlayer, state, handPos);
-      return 0;
+      return (playSmithy(currentPlayer, state, handPos));
 		
     case village:
-      //+1 Card
-      drawCard(currentPlayer, state);
-			
-      //+2 Actions
-      state->numActions = state->numActions + 2;
-			
-      //discard played card from hand
-      discardCard(handPos, currentPlayer, state, 0);
-      return 0;
-		
+	  return(playVillage(currentPlayer,state,handPos));
+    		
     case baron:
       state->numBuys++;//Increase buys by 1!
       if (choice1 > 0){//Boolean true or going to discard an estate
@@ -971,8 +961,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case great_hall:
-		playGreatHall(currentPlayer, *state, handPos); 
-		return 0;
+		return (playGreatHall(currentPlayer, state, handPos));
 		
     case minion:
       //+1 action
@@ -1026,8 +1015,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case steward:
-		playSteward(choice1, choice2, choice3, currentPlayer, state, handPos);
-		return 0;
+		return (playSteward(choice1, choice2, choice3, currentPlayer, state, handPos));
 		
     case tribute:
       if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1){

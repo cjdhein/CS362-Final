@@ -4,7 +4,7 @@
  * 
  * Include in makefile:
  *
- * unittest2: unittest3.c dominion.o rngs.o testutils.o
+ * unittest3: unittest3.c dominion.o rngs.o testutils.o
  *      gcc -o unittest3 -g unittest3.c dominion.o rngs.o testutils.o $(CFLAGS)
  *
  */
@@ -18,7 +18,7 @@
 #include "testutils.h"
 
 // set NOISY_TEST to 0 to remove printfs from output
-#define NOISY_TEST 1
+#define NOISY_TEST 0
 
 
 
