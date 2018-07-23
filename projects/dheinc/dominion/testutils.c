@@ -66,6 +66,8 @@ int testCompare(const void* a, const void* b) {
 
 void resetForTest(struct gameState *game, struct gameState *pre, int testCard) {
 
+	memset(game,0,sizeof(struct gameState));
+
 	// set the kingdom cards being used
 	int k[10] = {smithy, gardens, great_hall, village, minion, mine, cutpurse, sea_hag, tribute, adventurer};	
 	// initialize the game
