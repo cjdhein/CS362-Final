@@ -6,12 +6,19 @@ int assertLite(int line, int left, int right, int equal);
 
 int testCompare(const void* a, const void* b);
 
+struct gameState* randomState(int testCard);
+
 void resetForTest(struct gameState *game, struct gameState *pre, int testCard);
+
+void resetForRandTest(struct gameState *game, struct gameState *pre, int testCard);
 
 void printHand(struct gameState *game);
 
 void printDiscard(struct gameState *game) ;
 
 void printDeck(struct gameState *game);
+
+int* randomKingdom(int);
+
 
 #endif
