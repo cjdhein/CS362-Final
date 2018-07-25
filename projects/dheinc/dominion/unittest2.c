@@ -65,19 +65,19 @@ void test1(struct gameState *game, int deckNum){
 		shuffle(deckNum,game);
 		
 		//	confirm same number of cards post shuffle
-		assertLite(__LINE__,preSize,game->deckCount[deckNum],1);
+		assertLite(__LINE__,preSize,game->deckCount[deckNum],1, NOISY_TEST);
 			
 
 		//	compare memory to ensure that it is different post-shuffle
 		//		this shows that the cards have changed their order (next step shows same cards exist)
 		ret = memcmp(game->deck[deckNum],preDeck,sizeof(preDeck));
-		assertLite(__LINE__,ret,0,0);
+		assertLite(__LINE__,ret,0,0, NOISY_TEST);
 		
 		//	sort shuffled deck to bring it back to starting order
 		//		this allows us to show the same cards are in the deck pre and post shuffle
 		qsort ((void*)(game->deck[deckNum]), game->deckCount[deckNum], sizeof(int), testCompare);
 		ret = memcmp(game->deck[deckNum],preDeck,sizeof(preDeck));
-		assertLite(__LINE__,ret,0,1);
+		assertLite(__LINE__,ret,0,1, NOISY_TEST);
 	}
 
 }
@@ -98,19 +98,19 @@ int main(int argc, char *argv[]) {
 	game->deck[1][0] = 1;
 	game->deckCount[1] = 1;
 	ret = shuffle(1,game);
-	assertLite(__LINE__,ret,0,1);
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);
 
 	// set a deck to zero and test return value (should be -1)
 	printf("Testing shuffle on zero card deck...\n");
 	game->deckCount[2] = 0;
 	ret = shuffle(2,game);
-	assertLite(__LINE__,ret,-1,1);
+	assertLite(__LINE__,ret,-1,1, NOISY_TEST);
 	
 	// set a deck to -20 and test return value (should be -1)
 	printf("Testing shuffle on negative size deck...\n");
 	game->deckCount[3] = -20;
 	ret = shuffle(3,game);
-	assertLite(__LINE__,ret,-1,1);
+	assertLite(__LINE__,ret,-1,1, NOISY_TEST);
 
     return 0;
 }

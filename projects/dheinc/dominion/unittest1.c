@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 		printf("\nTest 1 - Testing all supply at 0. Expected return 1.\n");
 		printf("Actual return %d\n",ret);
 #endif		
-		assertLite(__LINE__, ret,1,1);
+		assertLite(__LINE__, ret,1,1, NOISY_TEST);
 			
 		
 		//Test all at -1. Expected return 0
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 		printf("\nTest 2 - Testing all supply at -1. Expected return 0.\n");
 		printf("Actual return %d\n",ret);
 #endif				
-		assertLite(__LINE__, ret,0,1);
+		assertLite(__LINE__, ret,0,1, NOISY_TEST);
 		
 		//Test all at 1. Expected return 0
 		test3(game);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 		printf("\nTest 3 - Testing all supply at 1. Expected return 0.\n");
 		printf("Actual return %d\n\n",ret);
 #endif				
-		assertLite(__LINE__, ret,0,1);
+		assertLite(__LINE__, ret,0,1, NOISY_TEST);
 
 		//Test province at 0. Expected return 1
 		test4(game);
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 		printf("\nTest 4 - Testing province supply at 0. Expected return 1.\n");
 		printf("Actual return %d\n",ret);
 #endif				
-		assertLite(__LINE__, ret,1,1);
+		assertLite(__LINE__, ret,1,1, NOISY_TEST);
 		
 		//Test curse(0), estate(1) and treasure_map(26) at 0. Expected return 1
 		test5(game);
@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
 		printf("\nTest 5 - Testing curse(0), estate(1) and treasure_map(26) at 0. Expected return 1.\n");
 		printf("Actual return %d\n",ret);
 #endif				
-		assertLite(__LINE__, ret,1,1);
+		assertLite(__LINE__, ret,1,1, NOISY_TEST);
 	
 		printf("Testing complete.\n");	
     return 0;

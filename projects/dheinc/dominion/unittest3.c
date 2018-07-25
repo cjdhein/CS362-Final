@@ -31,32 +31,32 @@ int main(int argc, char *argv[]) {
 	turn = 1;
 	game->whoseTurn = turn;
 	ret = whoseTurn(game);
-	assertLite(__LINE__,ret,turn,1);
+	assertLite(__LINE__,ret,turn,1, NOISY_TEST);
 
 	turn = 2;
 	game->whoseTurn = turn;
 	ret = whoseTurn(game);
-	assertLite(__LINE__,ret,turn,1);
+	assertLite(__LINE__,ret,turn,1, NOISY_TEST);
 
 	turn = 3;
 	game->whoseTurn = turn;
 	ret = whoseTurn(game);
-	assertLite(__LINE__,ret,turn,1);
+	assertLite(__LINE__,ret,turn,1, NOISY_TEST);
 
 	turn = 0;
 	game->whoseTurn = turn;
 	ret = whoseTurn(game);
-	assertLite(__LINE__,ret,turn,1); 
+	assertLite(__LINE__,ret,turn,1, NOISY_TEST); 
 
 	turn = -1;
 	game->whoseTurn = turn;
 	ret = whoseTurn(game);
-	assertLite(__LINE__,ret,turn,1);
+	assertLite(__LINE__,ret,turn,1, NOISY_TEST);
 
 	turn = 99;
 	game->whoseTurn = turn;
 	ret = whoseTurn(game);
-	assertLite(__LINE__,ret,turn,1);
+	assertLite(__LINE__,ret,turn,1, NOISY_TEST);
 
 	printf("All tests complete.\n");
 

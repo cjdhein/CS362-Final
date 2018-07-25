@@ -1,15 +1,16 @@
 /*
- * randomtestcard1.c
+ * randomtestcard2.c
  *
- * Card being tested:	Smithy
+ * Card being tested:	Adventurer
  *
- * Card's Function:		Draw three cards from player's deck to their hand
+ * Card's Function:		Draw cards from deck until 2 treasure cards are revealed.
+ *					Place them in your hand and discard the other revealed cards.
  *
  * 
  * Include in makefile:
  *
- * randomtestcard1: randomtestcard1.c dominion.o rngs.o testutils.o
- *      gcc -o randomtestcard1 -g randomtestcard1.c dominion.o rngs.o testutils.o $(CFLAGS)
+ * randomtestcard2: randomtestcard2.c dominion.o rngs.o testutils.o
+ *      gcc -o randomtestcard2 -g randomtestcard2.c dominion.o rngs.o testutils.o $(CFLAGS)
  *
  */
 
@@ -28,6 +29,7 @@
 // number of tests
 #define TEST_COUNT 7
 
+int countTreasure(struct gameState *game);
 void runTests(int* testResults);
 
 int main(int argc, char *argv[]) {
@@ -37,7 +39,6 @@ int main(int argc, char *argv[]) {
 	memset(testResults,0,sizeof(int) * TEST_COUNT);
 
 	for(int count = 0; count < 200; count++) {
-//		printf("!!!!!!!!!!!!!!!! RUN %d !!!!!!!!!!!!!!!!\n",count);
 		runTests(testResults);
 	}
 
@@ -49,6 +50,22 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+int countTreasure(struct gameState *game) {
+	int count = 0;
+	int card;
+	for(int i = 0; i < game->handCount[0]; i++) {
+		card = game->hand[0][i];
+		switch(card){
+			case copper:
+			case silver:
+			case gold:
+				count++;
+			default:
+				break;
+		}
+	}
+	return count;
+}
 
 void runTests(int* testResults){
 	int ret;
@@ -56,15 +73,15 @@ void runTests(int* testResults){
 
 	int testFail = 0;
 
-	int smithyPos;
+	int adventurerPos;
 	int preCardCount;
 	int cardCount;
 
 	struct gameState *game = newGame();
 	struct gameState *pre = newGame();
 
-	smithyPos = resetForRandTest(game, pre, smithy);
-	ret = cardEffect(smithy,-1,-1,-1,game,smithyPos,NULL);
+	adventurerPos = resetForRandTest(game, pre, adventurer);
+	ret = cardEffect(adventurer,-1,-1,-1,game,adventurerPos,NULL);
 #if NOISY_TEST
 		printf("\nTest 0 - Checking good return on cardEffect...\n");
 #endif	
@@ -100,7 +117,7 @@ void runTests(int* testResults){
 	assertRes=assertLite(__LINE__,preCardCount,cardCount,1,NOISY_TEST);	
 	if(assertRes){testResults[2] += 1;}
 
-	// test 3 - is smithy card discarded properly?
+	// test 3 - is adventurer card discarded properly?
 	//	- card leaves hand
 	//	- card ends up in discard
 	
@@ -110,33 +127,36 @@ void runTests(int* testResults){
 	assertRes=assertLite(__LINE__,(game->discardCount[game->whoseTurn] - pre->discardCount[pre->whoseTurn]),1,1,NOISY_TEST); // assert new discardCount - old is equal to 1
 	if(assertRes){testFail = 1;}
 #if NOISY_TEST
-	printf("\nTest 3: Checking if smithy is the latest card in discard\n");
+	printf("\nTest 3: Checking if adventurer is the latest card in discard\n");
 #endif
-	assertRes=assertLite(__LINE__,(*game->discard[game->discardCount[game->whoseTurn]-1]),smithy,1,NOISY_TEST); // assert the latest card in the discard pile is smithy
+	printf("discardCount: %d\n",game->discardCount[game->whoseTurn]);
+	assertRes=assertLite(__LINE__,(*game->discard[game->discardCount[game->whoseTurn]-1]),adventurer,1,NOISY_TEST); // assert the latest card in the discard pile is adventurer
 	if(assertRes){testFail = 1;}
 
 #if NOISY_TEST
-		printf("\nTest 3: Checking if smithy is still in hand\n");
+		printf("\nTest 3: Checking if adventurer is still in hand\n");
 #endif
-	assertRes=assertLite(__LINE__,(game->hand[game->whoseTurn][smithyPos]),smithy,0,NOISY_TEST); // confirm smithy is no longer in the hand
+	assertRes=assertLite(__LINE__,(game->hand[game->whoseTurn][adventurerPos]),adventurer,0,NOISY_TEST); // confirm adventurer is no longer in the hand
 	if(assertRes){testFail = 1;}
 
 	testResults[3] += testFail;
 	testFail = 0;
 
-	// test 4 - were 3 cards added to the hand and removed from the deck
-	//	- deckCount drops by 3 cards
-	//	- handCount goes up by 2 cards (accounting for smithy being removed)
+	// test 4 - were two treasure cards added to player's hand?
+	//	- handCount up by one (account for discarding adventurer)
+	//	- count of old treasure cards is two less than count of new
 
 #if NOISY_TEST
-	printf("\nTest 4: Checking for deckCount decrease by three...\n");
+	printf("\nTest 4: Checking if handcount up by one\n");
 #endif
-	assertRes=assertLite(__LINE__,(pre->deckCount[pre->whoseTurn] - game->deckCount[game->whoseTurn]),3,1,NOISY_TEST);
+	assertRes=assertLite(__LINE__,(game->handCount[game->whoseTurn] - pre->handCount[pre->whoseTurn]),1,1,NOISY_TEST);
 	if(assertRes){testFail = 1;}
 #if NOISY_TEST
-	printf("\nTest 4: Checking for handCount increase by two...\n");
+	printf("\nTest 4: Checking if count of treasures is up by 2\n");
 #endif
-	assertRes=assertLite(__LINE__,(game->handCount[game->whoseTurn] - pre->handCount[pre->whoseTurn]),2,1,NOISY_TEST);
+
+	assertRes = assertLite(__LINE__,countTreasure(game) - countTreasure(pre),2,1,NOISY_TEST);
+
 	if(assertRes){testFail = 1;}
  
 	testResults[4] += testFail;

@@ -8,55 +8,55 @@
 
 
 // equal: 0 for !=, 1 for ==, 2 for <, 3 for >, 4 for <=, 5 for >=
-int assertLite(int line, int left, int right, int equal) {
+int assertLite(int line, int left, int right, int equal,int loud) {
 	//printf("left: %d, right: %d",left,right);
 	switch (equal){
 		case 0://!=
 			if(left != right){
-				return 1;
-			} else {
+				return 0;
+			} else if(loud) {
 				printf("TEST FAILED. %d == %d at line %d\n",left,right, line);
 			}
 			break;
 		case 1://==
 			if(left == right){
-				return 1;
-			} else {
+				return 0;
+			} else if(loud) {
 				printf("TEST FAILED. %d != %d at line %d\n",left,right, line);
 			}
 			break;
 		case 2:
 			if(left < right){
-				return 1;
-			} else {
+				return 0;
+			} else if(loud) {
 				printf("TEST FAILED. %d is not < %d at line %d\n",left,right, line);
 			}
 			break;
 		case 3:
 			if(left > right){
-				return 1;
-			} else {
+				return 0;
+			} else if(loud) {
 				printf("TEST FAILED. %d is not > %d at line %d\n",left,right, line);
 			}
 			break;
 		case 4:
 			if(left <= right){
-				return 1;
-			} else {
+				return 0;
+			} else if(loud) {
 				printf("TEST FAILED. %d is not <= %d at line %d\n",left,right, line);
 			}
 			break;
 		case 5:
 			if(left >= right){
-				return 1;
-			} else {
+				return 0;
+			} else if(loud) {
 				printf("TEST FAILED. %d is not >= %d at line %d\n",left,right, line);
 			}
 			break;
 		default:
 			return -1;
 	}
-	return 0;
+	return 1;
 }
 
 int testCompare(const void* a, const void* b) {
@@ -86,7 +86,7 @@ void resetForTest(struct gameState *game, struct gameState *pre, int testCard) {
 	
 }
 
-void resetForRandTest(struct gameState *game, struct gameState *pre, int testCard) {
+int resetForRandTest(struct gameState *game, struct gameState *pre, int testCard) {
 	memset(game,0,sizeof(struct gameState));
 	free(game);
 	memset(pre,0,sizeof(struct gameState));
@@ -99,11 +99,13 @@ void resetForRandTest(struct gameState *game, struct gameState *pre, int testCar
 
 	
 	// give player the test card in their hand
-	game->hand[game->whoseTurn][game->handCount[game->whoseTurn]] = testCard;
-	game->handCount[game->whoseTurn]++;
+	int cardPos = rand() % game->handCount[game->whoseTurn] - 1;
+	game->hand[game->whoseTurn][cardPos] = testCard;
 
 	// store initial state in pre
 	memcpy(pre,game,sizeof(struct gameState));
+
+	return cardPos;
 
 }
 
