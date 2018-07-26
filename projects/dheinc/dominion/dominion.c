@@ -692,6 +692,7 @@ int playSteward(int choice1, int choice2, int choice3, int currentPlayer, struct
 
 int playAdventurer(int currentPlayer, int drawntreasure, struct gameState *state, int temphand[], int z, int cardDrawn)
 {
+
 	while(drawntreasure<2){
 		if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
 			shuffle(currentPlayer, state);
@@ -702,7 +703,7 @@ int playAdventurer(int currentPlayer, int drawntreasure, struct gameState *state
 			drawntreasure++;
 		else {
 			temphand[z]=cardDrawn;
-			//state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
+			state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
 			z++;
 		}
 	}

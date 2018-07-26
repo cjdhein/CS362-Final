@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 	memset(testResults,0,sizeof(int) * TEST_COUNT);
 
 	for(int count = 0; count < 200; count++) {
-//		printf("!!!!!!!!!!!!!!!! RUN %d !!!!!!!!!!!!!!!!\n",count);
+
 		runTests(testResults);
 	}
 
@@ -112,7 +112,7 @@ void runTests(int* testResults){
 #if NOISY_TEST
 	printf("\nTest 3: Checking if smithy is the latest card in discard\n");
 #endif
-	assertRes=assertLite(__LINE__,(*game->discard[game->discardCount[game->whoseTurn]-1]),smithy,1,NOISY_TEST); // assert the latest card in the discard pile is smithy
+	assertRes=assertLite(__LINE__,(game->discard[game->whoseTurn][game->discardCount[game->whoseTurn]-1]),smithy,1,NOISY_TEST); // assert the latest card in the discard pile is smithy
 	if(assertRes){testFail = 1;}
 
 #if NOISY_TEST
@@ -156,7 +156,7 @@ void runTests(int* testResults){
 
 	int preScore;
 	int postScore;
-	for(int i = 0; i < 4;i++) {
+	for(int i = 0; i < game->numPlayers; i++) {
 #if NOISY_TEST
 		printf("\nTest 6: Checking score unchanged for player %d.\n",i+1);
 #endif
