@@ -28,6 +28,10 @@
 // number of tests
 #define TEST_COUNT 7
 
+// number of iterations
+#define TEST_ITERATIONS 500
+
+
 void runTests(int* testResults);
 
 int main(int argc, char *argv[]) {
@@ -36,7 +40,7 @@ int main(int argc, char *argv[]) {
 	int* testResults = malloc(sizeof(int) * TEST_COUNT);
 	memset(testResults,0,sizeof(int) * TEST_COUNT);
 
-	for(int count = 0; count < 200; count++) {
+	for(int count = 0; count < TEST_ITERATIONS; count++) {
 
 		runTests(testResults);
 	}
