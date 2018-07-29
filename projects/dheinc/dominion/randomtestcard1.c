@@ -21,7 +21,7 @@
 #include "dominion_helpers.h"
 #include "rngs.h"
 #include "testutils.h"
-
+#include <limits.h>
 // set NOISY_TEST to 0 to remove printfs from output
 #define NOISY_TEST 0
 
@@ -29,7 +29,7 @@
 #define TEST_COUNT 7
 
 // number of iterations
-#define TEST_ITERATIONS 500
+#define TEST_ITERATIONS 32000
 
 
 void runTests(int* testResults);
@@ -85,11 +85,14 @@ void runTests(int* testResults){
 			printf("\nTest 1: Checking memory for changes to player %d.\n",i+1);
 #endif
 			assertRes=assertLite(__LINE__,memcmp(game->hand[i],pre->hand[i],sizeof(int)* (int) pre->handCount[i]),0,1,NOISY_TEST);   
-			if(assertRes){testFail = 1;}
+			if(assertRes){
+				printf("\nPlayer %d has memory change in hand.",i); testFail = 1;}
 			assertRes=assertLite(__LINE__,memcmp(game->deck[i],pre->deck[i],sizeof(int)* (int) pre->deckCount[i]),0,1,NOISY_TEST);
-			if(assertRes){testFail = 1;}
+			if(assertRes){
+				printf("\nPlayer %d has memory change in deck.",i); testFail = 1;}
 			assertRes=assertLite(__LINE__,memcmp(game->discard[i],pre->discard[i],sizeof(int)* (int) pre->discardCount[i]),0,1,NOISY_TEST);
-			if(assertRes){testFail = 1;}
+			if(assertRes){
+				printf("\nPlayer %d has memory change in discard.",i); testFail = 1;}
 		}
 	}
 	testResults[1] += testFail;

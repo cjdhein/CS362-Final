@@ -21,6 +21,7 @@
 #include "dominion_helpers.h"
 #include "rngs.h"
 #include "testutils.h"
+#include <limits.h>
 
 // set NOISY_TEST to 0 to remove printfs from output
 #define NOISY_TEST 0
@@ -29,7 +30,7 @@
 #define TEST_COUNT 7
 
 // number of iterations
-#define TEST_ITERATIONS 500
+#define TEST_ITERATIONS 32000
 
 int countTreasure(struct gameState *game);
 void runTests(int* testResults);
