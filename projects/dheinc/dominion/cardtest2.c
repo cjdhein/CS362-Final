@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
-	assertLite(__LINE__,ret,0,1);	
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);	
 
 	// test 2 - confirm player has same number of cards in hand+deck+discard
 	resetForTest(game, pre, adventurer);
@@ -70,14 +70,14 @@ int main(int argc, char *argv[]) {
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
-	assertLite(__LINE__,ret,0,1);
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);
 	
 #if NOISY_TEST
 	printf("\nTest 2: Checking if player 0 still has same number of cards total (deck + hand + discard)\n");
 #endif	
 	preCardCount = pre->deckCount[0] + pre->handCount[0] + pre->discardCount[0];
 	cardCount = game->deckCount[0] + game->handCount[0] + game->discardCount[0];  
-	assertLite(__LINE__,preCardCount,cardCount,1);
+	assertLite(__LINE__,preCardCount,cardCount,1, NOISY_TEST);
 
 	// test 3 - is adventurer card discarded properly?
 	//	- card leaves hand
@@ -88,13 +88,13 @@ int main(int argc, char *argv[]) {
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
-	assertLite(__LINE__,ret,0,1);
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);
 
 #if NOISY_TEST
 		printf("\nTest 3: Checking if adventurer is still in hand\n");
 #endif 
 	for (int i = 0; i < game->handCount[0];i++){
-		assertLite(__LINE__,(*game->hand[i]),adventurer,0); // confirm adventurer is no longer in the hand
+		assertLite(__LINE__,(*game->hand[i]),adventurer,0, NOISY_TEST); // confirm adventurer is no longer in the hand
 	}
 
 	// test 4 - were two treasure cards added to player's hand?
@@ -106,18 +106,18 @@ int main(int argc, char *argv[]) {
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
-	assertLite(__LINE__,ret,0,1);
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);
 
 #if NOISY_TEST
 	printf("\nTest 4: Checking if handcount up by one\n");
 #endif
-	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),1,1);	
+	assertLite(__LINE__,(game->handCount[0] - pre->handCount[0]),1,1, NOISY_TEST);	
 	
 #if NOISY_TEST
 	printf("\nTest 4: Checking if count of treasures is up by 2\n");
 #endif
 
-	assertLite(__LINE__,countTreasure(game) - countTreasure(pre),2,1);
+	assertLite(__LINE__,countTreasure(game) - countTreasure(pre),2,1, NOISY_TEST);
 	printHand(pre);
 	printHand(game);
 
@@ -129,12 +129,12 @@ int main(int argc, char *argv[]) {
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
-	assertLite(__LINE__,ret,0,1);
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);
 
 #if NOISY_TEST
 	printf("\nTest 5: Checking for no change in supply...\n");
 #endif
-	assertLite(__LINE__,memcmp(game->supplyCount,pre->supplyCount,(sizeof(int)*(treasure_map+1))),0,1);
+	assertLite(__LINE__,memcmp(game->supplyCount,pre->supplyCount,(sizeof(int)*(treasure_map+1))),0,1, NOISY_TEST);
 
 	// test 6 - confirm scores for all players are unchanged
 	resetForTest(game, pre, adventurer);
@@ -143,13 +143,13 @@ int main(int argc, char *argv[]) {
 #if NOISY_TEST
 		printf("\nChecking good return on cardEffect...\n");
 #endif	
-	assertLite(__LINE__,ret,0,1);
+	assertLite(__LINE__,ret,0,1, NOISY_TEST);
 
 	for(int i = 0; i < 4;i++) {
 #if NOISY_TEST
 		printf("\nTest 6: Checking score unchanged for player %d.\n",i+1);
 #endif
-		assertLite(__LINE__,scoreFor(i,game),scoreFor(i,pre),1);
+		assertLite(__LINE__,scoreFor(i,game),scoreFor(i,pre),1, NOISY_TEST);
 	}
 
     return 0;

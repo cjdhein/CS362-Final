@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	setSupply(game,count);
 	for (int i = 0; i <= treasure_map; i++) {
 		ret = supplyCount(i,game);
-		assertLite(__LINE__,ret,count,1);
+		assertLite(__LINE__,ret,count,1, NOISY_TEST);
 	}
 	
 	// test for negative
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 	setSupply(game,count);
 	for (int i = 0; i <= treasure_map; i++) {
 		ret = supplyCount(i,game);
-		assertLite(__LINE__,ret,count,1);
+		assertLite(__LINE__,ret,count,1, NOISY_TEST);
 	}
 
 	// test for positive
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	setSupply(game,count);
 	for (int i = 0; i <= treasure_map; i++) {
 		ret = supplyCount(i,game);
-		assertLite(__LINE__,ret,count,1);
+		assertLite(__LINE__,ret,count,1, NOISY_TEST);
 	} 
 	
 	// test for extremely large
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 	setSupply(game,count);
 	for (int i = 0; i <= treasure_map; i++) {
 		ret = supplyCount(i,game);
-		assertLite(__LINE__,ret,count,1);
+		assertLite(__LINE__,ret,count,1, NOISY_TEST);
 	} 
 
 	printf("All tests complete.\n");
