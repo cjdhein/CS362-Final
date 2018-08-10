@@ -21,6 +21,7 @@ public class UrlValidatorTest1 extends TestCase {
 	   String URI_permitted_chars = "!$&'()*+,;=";
 	   
 	   Random random = new Random();
+	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 	
 	   public static final int INVALID_SCHEME_CHANCE = 25;		// % chance of invalid scheme
 	   public static final int INVALID_AUTHORITY_CHANCE = 25; 	// % chance of invalid authority
@@ -36,8 +37,8 @@ public class UrlValidatorTest1 extends TestCase {
    {
 //You can use this function to implement your manual testing	   
 	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
-	   //2Gx+://219.173.204.146
-	   boolean val = urlVal.isValid("Gx+://www.google.com");
+	   //VP40CNiSruWUFvcKEo9x://[8607:b901:92e0:a9ee:9af5:b5ea:fd50:63e9]
+	   boolean val = urlVal.isValid("VP40CNiSruWUFvcKEo9x://[8607:b901:92e0:a9ee:9af5:b5ea:fd50:63e9]");
 	   assertTrue(val);
    }
    
@@ -123,7 +124,7 @@ public class UrlValidatorTest1 extends TestCase {
    public void testIsValid()
    {
 	   //You can use this function for programming based testing
-	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	  
 	   
 	   // build our random url
 	   ResultPair SchemePair = generateScheme();
@@ -165,11 +166,33 @@ public class UrlValidatorTest1 extends TestCase {
    {
 	   System.out.println("---------- TEST FAILED -----------");
 	   System.out.println("url: " + url);
-	   System.out.println("SchemePair: "+ SchemePair.item + " -- " + SchemePair.valid );
-	   System.out.println("AuthorityPair: "+ AuthorityPair.item + " -- " + AuthorityPair.valid );
-	   System.out.println("PathPair: "+ PathPair.item + " -- " + PathPair.valid );
-	   System.out.println("QueryPair: "+ QueryPair.item + " -- " + QueryPair.valid );
-	   System.out.println("FragmentPair: "+ FragmentPair.item + " -- " + FragmentPair.valid );
+	   
+	   // check scheme
+	   
+	   //remove :// from end if present
+	   String scheme = SchemePair.item;
+	   if(scheme.substring(scheme.length() - 3).contains("://"))
+		   scheme = scheme.substring(0, scheme.length() - 3);
+	   
+	   if(urlVal.isValidScheme(scheme) != SchemePair.valid)
+		   System.out.println("SchemePair: "+ SchemePair.valid + " -- " + scheme );
+	   
+	   // check authority
+	   if(urlVal.isValidAuthority(AuthorityPair.item)!= AuthorityPair.valid )
+	   		System.out.println("AuthorityPair: "+ AuthorityPair.valid + " -- " + AuthorityPair.item );
+	   
+	   // check path
+	   if(urlVal.isValidPath(PathPair.item) != PathPair.valid )
+		   System.out.println("PathPair: "+ PathPair.valid + " -- " + PathPair.item );
+	   
+	   // check query
+	   if(urlVal.isValidQuery(QueryPair.item) != QueryPair.valid )
+		   System.out.println("QueryPair: "+ QueryPair.valid + " -- " + QueryPair.item );
+	   
+	   // check fragment
+	   if(urlVal.isValidFragment(FragmentPair.item) != FragmentPair.valid )
+		   System.out.println("FragmentPair: "+ FragmentPair.valid + " -- " + FragmentPair.item );
+	   
 	   System.out.println("----------------------------------");
    }
    // generate valid or invalid scheme
@@ -247,8 +270,22 @@ public class UrlValidatorTest1 extends TestCase {
 		   authority += "@";
 	   }
 	   
-	   authority += generateIP4();
 	   
+	   switch(random.nextInt(2))
+	   {
+	   // valid ip4
+	   	case 0: 
+		   authority += generateIP4();
+		   break;
+	   	case 1:
+	   	// valid ip6 -- note ip6 cannot have user info so it is removed
+	   		authorityValid = true;
+	   		authority = "[" + generateIP6() + "]";
+	   		break;
+	   	
+	   		default:
+	   			
+	   }
 	
 	   return new ResultPair(authority, authorityValid);
    }
@@ -268,6 +305,23 @@ public class UrlValidatorTest1 extends TestCase {
 	   }
 	 
 	   return IP4;
+   }
+   
+   
+   // generate valid ip6 address
+   String generateIP6()
+   {
+	   String ip6 = "";
+	   
+	   // generate valid ip6 address
+	   for(int i = 0; i < 8; i++)
+	   {
+		   ip6 += Integer.toHexString((random.nextInt(65536)));
+		   
+		   if(i < 7) ip6 += ":";
+	   }
+	   
+	   return ip6;
    }
    
    
