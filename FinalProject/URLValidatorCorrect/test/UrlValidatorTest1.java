@@ -126,20 +126,52 @@ public class UrlValidatorTest1 extends TestCase {
 	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 	   
 	   // build our random url
-	   ResultPair schemePair = generateScheme();
-	   ResultPair authorityPair = generateAuthority();
+	   ResultPair SchemePair = generateScheme();
+	   ResultPair AuthorityPair = generateAuthority();
+	   ResultPair PathPair = generatePath();
+	   ResultPair QueryPair = generateQuery();
+	   ResultPair FragmentPair = generateFragment();
 	   
-	   String url = schemePair.item + authorityPair.item; //+ "www.google.com";
+	   String url = "";
+	   boolean result = true;
+	   boolean expected = true;
+	   
+	   for(int i = 0; i < 1000000; i++)
+	   {
+		   // build our random url
+		   SchemePair = generateScheme();
+		   AuthorityPair = generateAuthority();
+		   PathPair = generatePath();
+		   QueryPair = generateQuery();
+		   FragmentPair = generateFragment();
+		   url = SchemePair.item + AuthorityPair.item + PathPair.item + QueryPair.item + FragmentPair.item;
+	   
 	
 	   
-	   System.out.println(url);
-	   boolean result = urlVal.isValid( url);
-	   boolean expected = schemePair.valid;
-	   assertTrue(result == expected);
-	   
+		   	//System.out.println(url);
+	   		result = urlVal.isValid( url);
+	   		expected = SchemePair.valid && AuthorityPair.valid && PathPair.valid && QueryPair.valid && FragmentPair.valid;
+	   		if(result != expected)
+	   			outputTestInfo(url, SchemePair, AuthorityPair, PathPair, QueryPair, FragmentPair);
+	   		assertTrue(result == expected);
+	   		System.out.println(i);
+	   }
 	   
    }
    
+   
+   // output test info for debug
+   public void outputTestInfo(String url, ResultPair SchemePair, ResultPair AuthorityPair, ResultPair PathPair, ResultPair QueryPair, ResultPair FragmentPair)
+   {
+	   System.out.println("---------- TEST FAILED -----------");
+	   System.out.println("url: " + url);
+	   System.out.println("SchemePair: "+ SchemePair.item + " -- " + SchemePair.valid );
+	   System.out.println("AuthorityPair: "+ AuthorityPair.item + " -- " + AuthorityPair.valid );
+	   System.out.println("PathPair: "+ PathPair.item + " -- " + PathPair.valid );
+	   System.out.println("QueryPair: "+ QueryPair.item + " -- " + QueryPair.valid );
+	   System.out.println("FragmentPair: "+ FragmentPair.item + " -- " + FragmentPair.valid );
+	   System.out.println("----------------------------------");
+   }
    // generate valid or invalid scheme
    ResultPair generateScheme()
    {
@@ -198,37 +230,74 @@ public class UrlValidatorTest1 extends TestCase {
 	   {
 		   authority = randoString(uppercase + lowercase + numbers + URI_permitted_chars, 257);
 		   
+		   // add optional password?
 		   if(random.nextInt(100) < 25)
 		   {
-			   authority += ":" + randoString(uppercase + lowercase + numbers + URI_permitted_chars, 257);
+			   // username without pass is invalid
+			   if(authority.length() == 0)
+				   authorityValid = false;
+			   
+			   String password = ":" + randoString(uppercase + lowercase + numbers + URI_permitted_chars, 257);
+			   authority += password;
 			   
 		   }
+		   
+		   if(authority.length() == 0)
+			   authorityValid = false;
 		   authority += "@";
 	   }
 	   
-	   authority += generateIP4().item;
+	   authority += generateIP4();
 	   
 	
 	   return new ResultPair(authority, authorityValid);
    }
    
    
-   // generate valid or invalid ip4 address
-   ResultPair generateIP4()
+   // generate valid ip4 address
+   String generateIP4()
    {
 	   String IP4 = "";
-	   boolean validIP4 = true;
 	   
+		   // generate valid ip4 address
 	   for(int i = 0; i < 4; i++)
 	   {
 		   IP4 += Integer.toString(random.nextInt(256));
-		   
+			   
 		   if(i < 3) IP4 += ".";
 	   }
-	   
-	   return new ResultPair(IP4, validIP4);
+	 
+	   return IP4;
    }
    
+   
+   // generate valid or invalid path
+   public ResultPair generatePath()
+   {
+	   String path = "";
+	   boolean pathValid = true;
+	   
+	   return new ResultPair(path, pathValid);
+   }
+   
+   
+   // generate valid or invalid query
+   public ResultPair generateQuery()
+   {
+	   String query = "";
+	   boolean queryValid = true;
+	   
+	   return new ResultPair(query, queryValid);
+   }
+   
+   // generate valid or invalid fragment
+   public ResultPair generateFragment()
+   {
+	   String fragment = "";
+	   boolean fragmentValid = true;
+	   
+	   return new ResultPair(fragment, fragmentValid);
+   }
    
    // generates random string from validChars
    public String randoString(String validChars, int limit)
