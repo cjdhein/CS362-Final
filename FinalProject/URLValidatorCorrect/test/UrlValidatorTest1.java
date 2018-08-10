@@ -1694,8 +1694,8 @@ String validTLDs[] = { "AAA",
 			authority += "@";
 	   }
 	   
-	  switch(4) 
-	   //switch(random.nextInt(4))
+	  //switch(4) 
+	   switch(random.nextInt(4))
 	   
 	   {
 	   // valid ip4
@@ -1706,6 +1706,27 @@ String validTLDs[] = { "AAA",
 	   	// valid ip6 -- note ip6 cannot have user info so it is removed
 	   		authorityValid = true;
 	   		authority = "[" + generateIP6() + "]";
+	   		
+	   		int randoInvalidBrackets = random.nextInt(100);
+	   		
+	   		if(randoInvalidBrackets < 3)
+	   		{
+	   			authority = randoString(numbers + uppercase + lowercase, 1) + authority.substring(1);
+	   			authorityValid = false;
+	   		}
+	   		else if(randoInvalidBrackets < 6)
+	   		{
+	   			authority =  authority.substring(0, authority.length() - 2) + randoString(numbers + uppercase + lowercase, 1);
+	   			authorityValid = false;
+	   		}
+	   		else if(randoInvalidBrackets < 9)
+	   		{
+	   			authority = randoString(numbers + uppercase + lowercase, 1) + authority.substring(1, authority.length() - 2) + randoString(numbers + uppercase + lowercase, 1);
+	   			authorityValid = false;
+	   		}
+	   			
+	   		
+	   		
 	   		break;
 	   	
 	   	// default generate domain string (may be valid or invalid)
