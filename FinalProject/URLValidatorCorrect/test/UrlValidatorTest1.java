@@ -1,3 +1,14 @@
+/*
+ * TODO:
+ * 
+ * 1. enable all value combos to UrlValidator
+ * 2. ports
+ * 3. queries
+ * 4. fragments
+ * 
+ * 
+ */
+
 
 
 import java.util.Random;
@@ -1699,7 +1710,31 @@ String validTLDs[] = { "AAA",
 		"ZUERICH",
 		"ZW"
 };	
-	
+
+long UrlValidatorCombos[] = {
+/*0*/		0,
+/*1*/		UrlValidator.ALLOW_2_SLASHES,
+/*2*/		UrlValidator.ALLOW_ALL_SCHEMES,
+/*3*/		UrlValidator.ALLOW_LOCAL_URLS,
+/*4*/		UrlValidator.NO_FRAGMENTS,
+/*5*/		UrlValidator.ALLOW_2_SLASHES + UrlValidator.ALLOW_ALL_SCHEMES,
+/*6*/		UrlValidator.ALLOW_2_SLASHES + UrlValidator.ALLOW_LOCAL_URLS,
+/*7*/		UrlValidator.ALLOW_2_SLASHES + UrlValidator.NO_FRAGMENTS,
+/*8*/		UrlValidator.ALLOW_ALL_SCHEMES + UrlValidator.ALLOW_LOCAL_URLS,
+/*9*/		UrlValidator.ALLOW_ALL_SCHEMES + UrlValidator.NO_FRAGMENTS,
+/*10*/		UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.NO_FRAGMENTS,
+/*11*/		UrlValidator.ALLOW_2_SLASHES + UrlValidator.ALLOW_ALL_SCHEMES + UrlValidator.ALLOW_LOCAL_URLS,
+/*12*/		UrlValidator.ALLOW_2_SLASHES +UrlValidator.ALLOW_ALL_SCHEMES+UrlValidator.NO_FRAGMENTS,
+/*13*/		UrlValidator.ALLOW_2_SLASHES + UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.NO_FRAGMENTS,
+/*14*/		UrlValidator.ALLOW_ALL_SCHEMES + UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.NO_FRAGMENTS,
+/*15*/		UrlValidator.ALLOW_2_SLASHES + UrlValidator.ALLOW_ALL_SCHEMES + UrlValidator.ALLOW_LOCAL_URLS + UrlValidator.NO_FRAGMENTS
+};
+
+// ALLOW_2_SLASHES = 1, 5, 6, 7, 11, 12, 13, 15
+// ALLOW_ALL_SCHEMES = 2, 5, 8, 9, 11, 12, 14, 15
+// ALLOW_LOCAL_URLS = 3, 6, 8, 10, 11, 13, 14, 15
+// NO_FRAGMENTS = 4, 7, 9, 10, 12, 13, 14, 15
+
 	
 	   String lowercase = "abcdefghijklmnopqrstuvwxyz";
 	   String uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -1709,7 +1744,7 @@ String validTLDs[] = { "AAA",
 	   
 	   Random random = new Random();
 	   
-	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES );
+	    UrlValidator urlVal = new UrlValidator(null, null, UrlValidatorCombos[0]);//null, null, UrlValidator.ALLOW_ALL_SCHEMES );
 	   
 	   public static final int INVALID_SCHEME_CHANCE = 25;		// % chance of invalid scheme
 	   public static final int INVALID_AUTHORITY_CHANCE = 25; 	// % chance of invalid authority
@@ -1724,10 +1759,12 @@ String validTLDs[] = { "AAA",
    public void testManualTest()
    {
 //You can use this function to implement your manual testing	   
-	  // UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
-	   //Kkqmzg://ml8yuaZ1AY1Tb16bYE.jgFBsuvs6eie06eonRwIDRGGiEqMXs3uwKPveTKdCg3OPlmsDAle0jN.zLe97brpa.iO1jV-wDUW4yHDNrimsM0cHVQtAdMT60IqFadL3c.pqqc2zYe8JNPVo-JZAqZ5d5fT.bjOuFh3.EFIN6hd5eER0Q3U27IsYBXxyb2yVZBX4Wz.CHARITY
-	   boolean val = urlVal.isValid("Kkqmzg://ml8yuaZ1AY1Tb16bYE.jgFBsuvs6eie06eonRwIDRGGiEqMXs3uwKPveTKdCg3OPlmsDAle0jN.zLe97brpa.iO1jV-wDUW4yHDNrimsM0cHVQtAdMT60IqFadL3c.pqqc2zYe8JNPVo-JZAqZ5d5fT.bjOuFh3.EFIN6hd5eER0Q3U27IsYBXxyb2yVZBX4Wz.Com");
-	   //assertTrue(val);
+	   //UrlValidator urlVal = new UrlValidator(null, null, 0);
+
+	   
+	   //https://[e76f:140c:2e32:b66f:7af9:916c:fc29:909]/e95KCcC2aJLc(C('2UR/cQGBuy)$7HW4/ZRHX:O5/sx=IbTJE3N/ThxH3F,=isTXmeFCcDu2/
+	   boolean val = urlVal.isValid("https://[e76f:140c:2e32:b66f:7af9:916c:fc29:909]/e95KCcC2aJLc(C('2UR/cQGBuy)$7HW4/ZRHX:O5/sx=IbTJE3N/ThxH3F,=isTXmeFCcDu2/");
+	   assertTrue(val);
 	   
 	   String[] invalidList = new String[validSchemes.length];
 	   int index = 0;
@@ -1840,7 +1877,13 @@ String validTLDs[] = { "AAA",
    {
 	   //You can use this function for programming based testing
 	  
-	   UrlValidator urlVal_All_Schemes = new UrlValidator(null, null, 0);
+	   UrlValidator[] urlValArr = new UrlValidator[UrlValidatorCombos.length];
+	   
+	   for(int i = 0; i < UrlValidatorCombos.length; i++)
+		   urlValArr[i] = new UrlValidator(null, null, UrlValidatorCombos[i]);
+	   
+	   
+	  
 	   
 	   // build our random url
 	   ResultPair SchemePair = generateScheme();
@@ -1848,28 +1891,57 @@ String validTLDs[] = { "AAA",
 	   ResultPair PathPair = generatePath();
 	   ResultPair QueryPair = generateQuery();
 	   ResultPair FragmentPair = generateFragment();
-	   ResultPair ValidSchemePair = generateValidScheme();
 	   
 	   String url = "";
-	   String urlSchemes = "";
+	 
 	   boolean result = true;
 	   boolean expected = true;
-	   
+	    
+	   boolean has_all_schemes = true;
+	   boolean has_2_slashes = false;
+	   boolean has_local_url = false;
+	   boolean has_fragment = false;
+	  
 	   
 	   for(int i = 0; i < 1000000; i++)
 	   {
-		   // build our random url
-		   SchemePair = generateScheme();
-		   ValidSchemePair = generateValidScheme();
+	// build our random url
 		   
+		   // get scheme
+		   if(random.nextBoolean() == true)
+		   {
+			   SchemePair = generateScheme();
+			   has_all_schemes = true;
+		   }
+		   else
+		   {
+			   SchemePair = generateValidScheme();
+			   has_all_schemes = false;
+		   }
+		   
+		   // get authority
 		   AuthorityPair = generateAuthority();
+		   if(AuthorityPair.item.contains("."))
+			   has_local_url = false;
+		   else
+			   has_local_url = true;
+		   
+		   
+		   // get path
 		   PathPair = generatePath();
+		   if(PathPair.item.contains("//"))
+			   has_2_slashes = true;
+		   else
+			   has_2_slashes = false;
+		   
+		   // get query
 		   QueryPair = generateQuery();
+		   
+		   // get fragment
 		   FragmentPair = generateFragment();
 		   url = SchemePair.item + AuthorityPair.item + PathPair.item + QueryPair.item + FragmentPair.item;
-		   urlSchemes = ValidSchemePair.item + AuthorityPair.item + PathPair.item + QueryPair.item + FragmentPair.item;
-	
-	   
+		  
+/*	   
 		   	//System.out.println(url);
 	   		result = urlVal.isValid( url);
 	   		expected = SchemePair.valid && AuthorityPair.valid && PathPair.valid && QueryPair.valid && FragmentPair.valid;
@@ -1885,15 +1957,174 @@ String validTLDs[] = { "AAA",
 	   		assertTrue(result == expected);
 	   		
 	   		System.out.println(i);
+	*/   		
+	   		
+	   		
+	   		
+	   		for(int j = 0; j < UrlValidatorCombos.length; j++)
+	   		{
+	   		// ALLOW_2_SLASHES = 1, 5, 6, 7, 11, 12, 13, 15
+	   		// ALLOW_ALL_SCHEMES = 2, 5, 8, 9, 11, 12, 14, 15
+	   		// ALLOW_LOCAL_URLS = 3, 6, 8, 10, 11, 13, 14, 15
+	   		// NO_FRAGMENTS = 4, 7, 9, 10, 12, 13, 14, 15
+	   			
+	   			expected = SchemePair.valid && AuthorityPair.valid && PathPair.valid && QueryPair.valid && FragmentPair.valid;
+	   			
+	   			switch(j) {
+	   			// 2 slashes not allowed, all schemes not allowed, local urls not allowed, fragments allowed
+	   			case 0:
+	   				expected = expected && !has_2_slashes && !has_all_schemes && !has_local_url;
+	   			break;
+	   			// 2 slashes allowed, all schemes not allowed, local urls not allowed, fragments allowed
+	   			case 1:
+	   				expected = expected && !has_all_schemes && !has_local_url;
+	   			break;
+	   			// 2 slashes not allowed, all schemes allowed, local urls not allowed, fragments allowed
+	   			case 2:
+	   				expected = expected && !has_2_slashes && !has_local_url;
+	   			break;
+	   			// 2 slashes not allowed, all schemes not allowed, local url allowed, fragments allowed
+	   			case 3:
+	   				expected = expected && !has_2_slashes && !has_all_schemes;
+	   			break;
+	   			// 2 slashes not allowed, all schemes not allowed, local urls not allowed, fragments not allowed
+	   			case 4:
+	   				expected = expected && !has_2_slashes & !has_all_schemes && !has_local_url && !has_fragment;
+	   			break;
+	   			// 2 slashes allowed, all schemes allowed, local urls not allowed, fragments allowed
+	   			case 5:
+	   				expected = expected && !has_local_url;
+	   			break;
+	   			// 2 slashes allowed, all schemes not allowed, local urls allowed, fragments allowed
+	   			case 6:
+	   				expected = expected && !has_all_schemes;
+	   			break;
+	   			// 2 slashes allowed, all schemes not allowed, local urls not allowed, fragments not allowed
+	   			case 7:
+	   				expected = expected && !has_all_schemes && !has_local_url && !has_fragment;
+	   			break;
+	   			// 2 slashes not allowed, all schemes allowed, local urls allowed, fragments allowed
+	   			case 8:
+	   				expected = expected && !has_2_slashes;
+	   			break;
+	   			// 2 slashes not allowed, all schemes allowed, local urls not allowed, fragments not allowed
+	   			case 9:
+	   				expected = expected && !has_2_slashes && !has_local_url && !has_fragment;
+	   			break;
+	   			// 2 slashes not allowed, all schemes not allowed, local urls allowed, fragments not allowed
+	   			case 10:
+	   				expected = expected && !has_2_slashes && !has_all_schemes && !has_fragment;
+	   			break;
+	   			// 2 slashes allowed, all schemes allowed, local urls allowed, fragments allowed
+	   			case 11:
+	   				//expected = expected;
+	   			break;
+	   			// 2 slashes allowed, all schemes allowed, local urls not allowed, fragments not allowed
+	   			case 12:
+	   				expected = expected && !has_local_url && !has_fragment;
+	   			break;
+	   			// 2 slashes allowed, all schemes not allowed, local urls allowed, no fragments allowed
+	   			case 13:
+	   				expected = expected && !has_all_schemes && !has_fragment;
+	   			break;
+	   			// 2 slashes not allowed, all schemes allowed, local urls allowed, fragments not allowed
+	   			case 14:
+	   				expected = expected && !has_2_slashes && !has_fragment;
+	   			break;
+	   			// 2 slashes allowed, all schemes allowed, local urls allowed, fragments not allowed
+	   			case 15:
+	   				expected = expected && !has_fragment;
+	   			break;
+	   			
+	   			default:
+	   				System.out.println("**** ERROR: only 16 possible combinations of UrlValidator state)");
+	   				assertTrue(false);
+	   			}
+	   			
+	   			result = urlValArr[j].isValid(url);
+	   			if(result != expected)
+	   			{
+	   				outputTestInfo(url, SchemePair, AuthorityPair, PathPair, QueryPair, FragmentPair, j);
+	   			}
+	   			
+	   		}
+	   		
+	   		
 	   }
 	   
    }
    
+   public void outputTestParams(int testParams)
+   {
+  		// ALLOW_2_SLASHES = 1, 5, 6, 7, 11, 12, 13, 15
+  		// ALLOW_ALL_SCHEMES = 2, 5, 8, 9, 11, 12, 14, 15
+  		// ALLOW_LOCAL_URLS = 3, 6, 8, 10, 11, 13, 14, 15
+  		// NO_FRAGMENTS = 4, 7, 9, 10, 12, 13, 14, 15
+	   
+	   switch(testParams)
+	   {
+	   case 0:
+		   printTestParams(false, false, false, false);
+		   break;
+	   case 1:
+		   printTestParams(true, false, false, false);
+		   break;
+	   case 2:
+		   printTestParams(false, true, false, false);
+		   break;
+	   case 3:
+		   printTestParams(false, false, true, false);
+		   break;
+	   case 4:
+		   printTestParams(false, false, false, true);
+		   break;
+	   case 5:
+		   printTestParams(true, true, false, false);
+		   break;
+	   case 6:
+		   printTestParams(true, false, true, false);
+		   break;
+	   case 7:
+		   printTestParams(true, false, false, true);
+		   break;
+	   case 8:
+		   printTestParams(false, true, true, false);
+		   break;
+	   case 9:
+		   printTestParams(false, true, false, true);
+		   break;
+	   case 10:
+		   printTestParams(false, false, true, true);
+		   break;
+	   case 11:
+		   printTestParams(true, true, true, false);
+		   break;
+	   case 12:
+		   printTestParams(true, true, false, true);
+		   break;
+	   case 13:
+		   printTestParams(true, false, true, true);
+		   break;
+	   case 14:
+		   printTestParams(false, true, true, true);
+		   break;
+	   case 15:
+		   printTestParams(true, true, true, true);
+		   break;
+	   }
+   }
+   
+   public void printTestParams(boolean slashes, boolean schemes, boolean localUrls, boolean noFragments)
+   {
+	   System.out.println("Test Params: ALLOW_2_SLASHES: " + Boolean.toString(slashes) + " ALLOW_ALL_SCHEMES: " + Boolean.toString(schemes) + " ALLOW_LOCAL_URLS: " + Boolean.toString(localUrls) + " NO_FRAGMENTS: " + Boolean.toString(noFragments));
+   }
    
    // output test info for debug
-   public void outputTestInfo(String url, ResultPair SchemePair, ResultPair AuthorityPair, ResultPair PathPair, ResultPair QueryPair, ResultPair FragmentPair)
+   public void outputTestInfo(String url, ResultPair SchemePair, ResultPair AuthorityPair, ResultPair PathPair, ResultPair QueryPair, ResultPair FragmentPair, int testParams)
    {
 	   System.out.println("---------- TEST FAILED -----------");
+	   System.out.println("Test Params: " + Integer.toString(testParams));
+	   outputTestParams(testParams);
 	   System.out.println("url: " + url);
 	   
 	   // check scheme
@@ -2160,6 +2391,30 @@ String validTLDs[] = { "AAA",
    {
 	   String path = "";
 	   boolean pathValid = true;
+	   // 10% chance that path won't have leading /
+	   if(random.nextInt(10) > 0)
+		   path = "/";
+	   else
+		   pathValid = false;
+	   
+	
+	   
+	   int numberSegments = random.nextInt(13);
+	   
+	   
+	   for(int i = 0; i < numberSegments; i++)
+	   {
+		   path += randoString(uppercase + lowercase + numbers + URI_permitted_chars + ":@", 30);
+	   
+		   if(random.nextInt(10) > 0)
+			   path += "/";
+	   }
+	   
+	   if(path.length() >= 2 && path.substring(0,2).contains("//"))
+		   pathValid = false;
+	   
+	   if(path.length() == 0)
+		   pathValid = true;
 	   
 	   return new ResultPair(path, pathValid);
    }
