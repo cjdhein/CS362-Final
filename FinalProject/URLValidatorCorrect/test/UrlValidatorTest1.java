@@ -1744,7 +1744,7 @@ long UrlValidatorCombos[] = {
 	   
 	   Random random = new Random();
 	   
-	    UrlValidator urlVal = new UrlValidator(null, null, UrlValidatorCombos[0]);//null, null, UrlValidator.ALLOW_ALL_SCHEMES );
+	    UrlValidator urlVal = new UrlValidator(null, null, UrlValidatorCombos[11]);//null, null, UrlValidator.ALLOW_ALL_SCHEMES );
 	   
 	   public static final int INVALID_SCHEME_CHANCE = 25;		// % chance of invalid scheme
 	   public static final int INVALID_AUTHORITY_CHANCE = 25; 	// % chance of invalid authority
@@ -1762,8 +1762,12 @@ long UrlValidatorCombos[] = {
 	   //UrlValidator urlVal = new UrlValidator(null, null, 0);
 
 	   
-	   //https://[e76f:140c:2e32:b66f:7af9:916c:fc29:909]/e95KCcC2aJLc(C('2UR/cQGBuy)$7HW4/ZRHX:O5/sx=IbTJE3N/ThxH3F,=isTXmeFCcDu2/
-	   boolean val = urlVal.isValid("https://[e76f:140c:2e32:b66f:7af9:916c:fc29:909]/e95KCcC2aJLc(C('2UR/cQGBuy)$7HW4/ZRHX:O5/sx=IbTJE3N/ThxH3F,=isTXmeFCcDu2/");
+	/*
+	 * Test Params: 9
+Test Params: ALLOW_2_SLASHES: false ALLOW_ALL_SCHEMES: true ALLOW_LOCAL_URLS: false NO_FRAGMENTS: true
+url: http://[2577:b242:ebbf:1c58:c08a:a511:d38a:eec]/aKy3c)r1xS'MYO'upl;EEqg/bD(Fh(2GNCJL,Dtq)GL608P/xMHo189v(1u5HzZ=i4/
+	 */
+	   boolean val = urlVal.isValid("https://MO/dMDQRoMeDNvnNFb43u/h5/6C3vd:/CBlMZ@sXP1fJv!Q8Wq,MYz/ssCXIwe//Tj)a8GM6Z8*r$XZ+Q/f:I:O)*hd$:qS'/1+F'vjT:U,;;p5pfNeESG,/7Z1+k4s1,nLK71j4DFTa,vw(tJop/9y=Q2nK:0D,=q$KU+9e/");
 	   assertTrue(val);
 	   
 	   String[] invalidList = new String[validSchemes.length];
@@ -1905,6 +1909,8 @@ long UrlValidatorCombos[] = {
 	   
 	   for(int i = 0; i < 1000000; i++)
 	   {
+		   System.out.println("");
+		   System.out.print(Integer.toString(i) + ": ");
 	// build our random url
 		   
 		   // get scheme
@@ -1920,12 +1926,20 @@ long UrlValidatorCombos[] = {
 		   }
 		   
 		   // get authority
-		   AuthorityPair = generateAuthority();
-		   if(AuthorityPair.item.contains("."))
-			   has_local_url = false;
+		   if(random.nextBoolean() == true)
+		   {
+			   AuthorityPair = generateAuthority();
+			   
+			   if(AuthorityPair.item.contains(".") || AuthorityPair.item.contains(":"))
+				   has_local_url = false;
+			   else
+				   has_local_url = true;
+		   }
 		   else
+		   {
+			   AuthorityPair = generateLocalAuthority();
 			   has_local_url = true;
-		   
+		   }
 		   
 		   // get path
 		   PathPair = generatePath();
@@ -1933,6 +1947,17 @@ long UrlValidatorCombos[] = {
 			   has_2_slashes = true;
 		   else
 			   has_2_slashes = false;
+		   
+		   if(PathPair.item.length() > 0 && PathPair.item.charAt(0) != '/')
+		   {
+			   has_local_url = true;
+			   PathPair.valid = true;
+			   String temp = AuthorityPair.item + PathPair.item;
+			   if(temp.length() > 253) 
+				   AuthorityPair.valid = false;
+			   
+			  // if(temp.contains(""))
+		   }
 		   
 		   // get query
 		   QueryPair = generateQuery();
@@ -2041,10 +2066,28 @@ long UrlValidatorCombos[] = {
 	   				assertTrue(false);
 	   			}
 	   			
+	   			
+	   			System.out.print(Integer.toString(j) + " - ");
+	   			
 	   			result = urlValArr[j].isValid(url);
 	   			if(result != expected)
 	   			{
-	   				outputTestInfo(url, SchemePair, AuthorityPair, PathPair, QueryPair, FragmentPair, j);
+	   				System.out.println("** Expected: " + Boolean.toString(expected) + "  Result: " + Boolean.toString(result));
+	   				
+	   				if(expected == SchemePair.valid)
+	   					System.out.print("SchemePair: " + Boolean.toString(SchemePair.valid));
+	   				if(expected == AuthorityPair.valid)
+	   					System.out.print(" AuthorityPair: " + Boolean.toString(AuthorityPair.valid));
+	   				if(expected == PathPair.valid)
+	   					System.out.print(" PathPair: " + Boolean.toString(PathPair.valid));
+	   				if(expected == QueryPair.valid)
+	   					System.out.print(" QueryPair: " + Boolean.toString(QueryPair.valid));
+	   				if(expected == FragmentPair.valid)
+	   					System.out.print(" FragmentPair: " + Boolean.toString(FragmentPair.valid));
+	   				System.out.println("");
+	   				
+	   				boolean boolVals[] = {has_2_slashes, has_all_schemes, has_local_url, has_fragment};
+	   				outputTestInfo(url, SchemePair, AuthorityPair, PathPair, QueryPair, FragmentPair, j, boolVals);
 	   			}
 	   			
 	   		}
@@ -2120,10 +2163,12 @@ long UrlValidatorCombos[] = {
    }
    
    // output test info for debug
-   public void outputTestInfo(String url, ResultPair SchemePair, ResultPair AuthorityPair, ResultPair PathPair, ResultPair QueryPair, ResultPair FragmentPair, int testParams)
+   public void outputTestInfo(String url, ResultPair SchemePair, ResultPair AuthorityPair, ResultPair PathPair, ResultPair QueryPair, ResultPair FragmentPair, int testParams, boolean[] boolVals)
    {
 	   System.out.println("---------- TEST FAILED -----------");
 	   System.out.println("Test Params: " + Integer.toString(testParams));
+	   System.out.println("Boolean Values: has_2_slashes: " + Boolean.toString(boolVals[0]) + " has_all_schemes: " + Boolean.toString(boolVals[1]) + " has_local_url: " + Boolean.toString(boolVals[2]) + " has_fragment: " + Boolean.toString(boolVals[3]));
+	   
 	   outputTestParams(testParams);
 	   System.out.println("url: " + url);
 	   
@@ -2203,6 +2248,24 @@ long UrlValidatorCombos[] = {
 	   int index = random.nextInt(validSchemes.length);
 	   return new ResultPair(validSchemes[index] + "://", true);
    }
+   
+  // generate local authority
+   ResultPair generateLocalAuthority()
+   {
+	   boolean authorityValid = true;
+	   String authority = "";
+	   
+	   authority = randoString(uppercase + lowercase + numbers + "-", 67);
+	   
+	   if(authority.length() <= 0 || authority.length() > 63)
+		   authorityValid = false;
+	   
+	   if(authority.length() > 0 && (authority.charAt(0) == '-' || authority.charAt(authority.length() - 1) == '-'))
+		   authorityValid = false;
+	   
+	   return new ResultPair(authority, authorityValid);
+   }
+   
    
    // generate valid or invalid authority
    ResultPair generateAuthority()
@@ -2369,8 +2432,12 @@ long UrlValidatorCombos[] = {
 		   domain += ".";
 	   }
 	   
-	 //if(domain.length()  0)
-	   //domain = domain.substring(0,  domain.length() - 1);
+	 if(domain.length() == 0)
+	 {
+		 domain += ".";
+		 domainValid = false;
+	 }
+
 	   
 		domain += generateValidTLD();
 		 
@@ -2394,12 +2461,8 @@ long UrlValidatorCombos[] = {
 	   // 10% chance that path won't have leading /
 	   if(random.nextInt(10) > 0)
 		   path = "/";
-	   else
-		   pathValid = false;
-	   
-	
-	   
-	   int numberSegments = random.nextInt(13);
+		   
+	   int numberSegments = random.nextInt(2);
 	   
 	   
 	   for(int i = 0; i < numberSegments; i++)
