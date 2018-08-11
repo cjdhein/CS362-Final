@@ -23,6 +23,14 @@ public class UrlValidatorTest2 extends TestCase {
 	public boolean testAuthorities = true;
 	public boolean testPaths = true;
 	public boolean testQueries = true;
+	public boolean testFragments = true;
+	
+	String schemesToUse[] = {
+			"file",
+			"ftp",
+			"http",
+			"https"
+	};
 	
 	// valid schemes (currently only 3 are being used, the rest are not implemented)
 	String validSchemes[] = {
@@ -81,7 +89,7 @@ public class UrlValidatorTest2 extends TestCase {
 				"fax",
 				"feed",
 				"feedready",
-				"file",  
+				"file", 
 				"filesystem",
 				"finger",
 				"fish",
@@ -1785,7 +1793,7 @@ public class UrlValidatorTest2 extends TestCase {
 		   boolean has_fragment = false;
 		   
 		   
-		   for(int i = 0; i < 50000; i++)
+		   for(int i = 0; i < 1000000; i++)
 		   {
 					     
 			   // start output of test #
@@ -1865,6 +1873,10 @@ public class UrlValidatorTest2 extends TestCase {
 					AuthorityPair.valid = AuthorityPair.valid && PortPair.valid;
 				}
 				
+			/*	// check if file: scheme
+				if(SchemePair.item.contains("file"))
+					AuthorityPair.valid = true;
+				*/
 			}
 			
 			// get path
@@ -1897,6 +1909,38 @@ public class UrlValidatorTest2 extends TestCase {
 					QueryPair.item = "?" + QueryPair.item;
 			}
 			   
+			
+			// get fragment
+			if(testFragments)
+			{
+				FragmentPair.item = "";
+				FragmentPair.valid = true;
+				has_fragment = false;   // fragment is a little different, NO_FRAGMENT disables fragment support 
+				
+				if(random.nextBoolean() == true)
+					FragmentPair = generateFragment();
+				
+				if(FragmentPair.item.length() > 0)
+				{
+					FragmentPair.item = "#" + FragmentPair.item;
+					has_fragment = true;
+				}
+				else
+				{
+					if(random.nextInt(100) < 10)
+					{
+						FragmentPair.item = "#";
+						FragmentPair.valid = true;
+						has_fragment = true;
+					}
+					else
+					{
+						has_fragment = false;
+					}
+				}
+				
+			}
+			
 			 // build url
 			   url = SchemePair.item + AuthorityPair.item  + PathPair.item + QueryPair.item + FragmentPair.item;
 		   
@@ -2020,6 +2064,21 @@ public class UrlValidatorTest2 extends TestCase {
 	   			if(!(result == true && PortPair.valid == false))
 	   				assertTrue(result == expected);
 	   		}	}   
+		   
+		   
+		   // static tests
+		   for(int i = 0; i < urlValArr.length; i++)
+		   {
+			   System.out.println("Static Tests");
+			   assertTrue(urlValArr[i].isValid("") == false);
+			   assertTrue(urlValArr[i].isValid(null) == false);
+			   assertTrue(urlValArr[i].isValid(randoString(uppercase + lowercase + numbers, 1000)) == false);
+			   assertTrue(urlValArr[i].isValid("http://www.google.com") == true);
+			   assertTrue(urlValArr[i].isValid("??://www.google.com#?asdfsa###") == false);
+			   assertTrue(urlValArr[i].isValid("http://[ffff:FFFF:0000:0000:abcd:efahb:1234:9999]") == false);
+			   assertTrue(urlValArr[0].isValid("file://asdfjkl:#") == false);
+			   assertTrue(urlValArr[0].isValid("file:dosbox.com/") == false);
+		   }
 	 }
 	 public void outputTestParams(int testParams)
 	   {
@@ -2453,7 +2512,7 @@ public class UrlValidatorTest2 extends TestCase {
 		  String query = "";
 		  boolean queryValid = true;
 		  
-		  String queryString = uppercase + lowercase + URI_permitted_chars + ":@/?";
+		  String queryString = uppercase + lowercase + URI_permitted_chars + numbers + ":@/?";
 		  
 		  if(random.nextBoolean() == true)
 			  queryString = queryString + " ";
@@ -2465,6 +2524,25 @@ public class UrlValidatorTest2 extends TestCase {
 		  
 		  
 		  return new ResultPair(query, queryValid);
+	  }
+	  
+	  
+	  public ResultPair generateFragment()
+	  {
+		  String fragment = "";
+		  boolean fragmentValid = true;
+		  
+		  String fragmentString = uppercase  + lowercase + URI_permitted_chars + numbers + ":@/?";
+		  
+		  if(random.nextBoolean() == true)
+			  fragmentString = fragmentString + "# \\\"\';:~`$%^&*()-_+=|{}[]<>,.";
+		  
+		  fragment = randoString(fragmentString, 130);
+		  
+		  //if(fragment.contains(""))
+		//	  fragmentValid = false;
+		  
+		  return new ResultPair(fragment, fragmentValid);
 	  }
 	  
 }

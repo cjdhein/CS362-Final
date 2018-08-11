@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -301,6 +302,7 @@ public class UrlValidator implements Serializable {
 
         // Check the whole url address structure
         Matcher urlMatcher = URL_PATTERN.matcher(value);
+       
         if (!urlMatcher.matches()) {
             return false;
         }
