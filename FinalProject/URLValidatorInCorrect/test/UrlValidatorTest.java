@@ -138,6 +138,67 @@ public class UrlValidatorTest extends TestCase {
 	   testUrl = "https";
 	   res = uv.isValid(testUrl);
 	   assertit(testUrl,false,res);
+	   System.out.print("https: is invalid: ");
+	   testUrl = "https:";
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+	   System.out.print("https:: is invalid: ");
+	   testUrl = "https::";
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+	   System.out.print("https:/ is invalid: ");
+	   testUrl = "https:/";
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+
+	   
+	   System.out.println("\nAuthority alone");
+
+
+	   System.out.print("www.google.com is invalid: ");
+	   testUrl = "www.google.com";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+	   
+	   System.out.print("google.com is invalid: ");
+	   testUrl = "google.com";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+	   
+	   System.out.print("0.0.0.0 is invalid: ");
+	   testUrl = "0.0.0.0";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+
+	   System.out.println("\nPath alone");
+
+	   System.out.print("/test1 is invalid: ");
+	   testUrl = "/test1";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+	   
+	   System.out.print("/.. is invalid: ");
+	   testUrl = "/..";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,false,res);
+	   
+
+	   System.out.println("\nScheme + Authority");
+
+	   System.out.print("http://www.google.com is valid: ");
+	   testUrl = "http://www.google.com";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,true,res);
+	   
+	   System.out.print("http://google.com is valid: ");
+	   testUrl = "http://google.com";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,true,res);
+
+	   System.out.print("http://0.0.0.0 is valid: ");
+	   testUrl = "http://0.0.0.0";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,true,res);
 
 	   //Any valid url starting with ftp:// or https://
 	   //throws an error for reason unknown at this point
@@ -146,16 +207,13 @@ public class UrlValidatorTest extends TestCase {
 //	   testUrl = "https://www.google.com";	   
 //	   res = uv.isValid(testUrl);
 //	   assertit(testUrl,true,res);
-//
-//	   System.out.print("https is invalid: ");
-//	   testUrl = "ftp://www.google.com";	   
+//	   System.out.print("https://0.0.0.0 is valid: ");
+//	   testUrl = "https://0.0.0.0";	   
 //	   res = uv.isValid(testUrl);
 //	   assertit(testUrl,true,res);
 	   
-	   testUrl = "www.google.com";	   
-	   res = uv.isValid(testUrl);
-	   assertit(testUrl,true,res);
 	   
+	  
    }
    
    public void testYourSecondPartition(){
@@ -181,16 +239,6 @@ public class UrlValidatorTest extends TestCase {
 		   System.out.println(tested + " passed" );
 	   }
    }
-//   public static void main(String[] args) {
-//	   
-//
-//	   System.out.println("compiled\n");
-//	   
-//	   System.out.println("asserttest");
-//	   assertit("bob", true, true);
-//	   
-//
-//   }
 
 }
 
