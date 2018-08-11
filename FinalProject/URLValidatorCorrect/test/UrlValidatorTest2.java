@@ -1793,7 +1793,7 @@ public class UrlValidatorTest2 extends TestCase {
 		   boolean has_fragment = false;
 		   
 		   
-		   for(int i = 0; i < 1000000; i++)
+		   for(int i = 0; i < 500000; i++)
 		   {
 					     
 			   // start output of test #
@@ -2067,17 +2067,35 @@ public class UrlValidatorTest2 extends TestCase {
 		   
 		   
 		   // static tests
+		   
+		  
+		   
 		   for(int i = 0; i < urlValArr.length; i++)
 		   {
 			   System.out.println("Static Tests");
 			   assertTrue(urlValArr[i].isValid("") == false);
 			   assertTrue(urlValArr[i].isValid(null) == false);
-			   assertTrue(urlValArr[i].isValid(randoString(uppercase + lowercase + numbers, 1000)) == false);
+			   assertTrue(urlValArr[i].isValid(randoString(uppercase + lowercase + numbers, 10000)) == false);
 			   assertTrue(urlValArr[i].isValid("http://www.google.com") == true);
 			   assertTrue(urlValArr[i].isValid("??://www.google.com#?asdfsa###") == false);
 			   assertTrue(urlValArr[i].isValid("http://[ffff:FFFF:0000:0000:abcd:efahb:1234:9999]") == false);
-			   assertTrue(urlValArr[0].isValid("file://asdfjkl:#") == false);
-			   assertTrue(urlValArr[0].isValid("file:dosbox.com/") == false);
+			//   urlValArr[i].isValid("file:///C:/users");
+			 //  urlValArr[i].isValid("`~!---- ------------ --");
+			   
+			 //  urlValArr[i].isValid("file:dosbox.com/");
+			   assertTrue( urlValArr[i].isValid("file://asdfjkl:#") == false);
+			   assertTrue(urlValArr[i].isValid("file:dosbox.com/") == false);
+			   if(i == 2 || i == 5 || i == 8 || i == 9 || i == 11 || i == 12 || i == 14 || i == 15)
+			   {
+				   assertTrue(urlValArr[i].isValid("file://asdfjkl")==true);
+				   
+			   }
+			   else
+			   {
+				   assertTrue(urlValArr[i].isValid("file://asdfjkl")==false);
+
+			   }
+			
 		   }
 	 }
 	 public void outputTestParams(int testParams)
