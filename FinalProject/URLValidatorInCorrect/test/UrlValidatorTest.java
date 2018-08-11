@@ -122,7 +122,7 @@ public class UrlValidatorTest extends TestCase {
 	   
 	   // These tests should fail, but throw errors
 	   // Unable to pinpoint error sources
-//	   
+	   
 //	   System.out.print("ftp:// is invalid: ");
 //	   testUrl = "ftp://";
 //	   res = uv.isValid(testUrl);
@@ -207,12 +207,22 @@ public class UrlValidatorTest extends TestCase {
 //	   testUrl = "https://www.google.com";	   
 //	   res = uv.isValid(testUrl);
 //	   assertit(testUrl,true,res);
-//	   System.out.print("https://0.0.0.0 is valid: ");
-//	   testUrl = "https://0.0.0.0";	   
+//	   System.out.print("ftp://0.0.0.0 is valid: ");
+//	   testUrl = "ftp://0.0.0.0";	   
 //	   res = uv.isValid(testUrl);
 //	   assertit(testUrl,true,res);
 	   
+	   System.out.println("\nScheme + Authority + Path");
+
+	   System.out.print("http://www.google.com/test1 is valid: ");
+	   testUrl = "http://www.google.com";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,true,res);
 	   
+	   System.out.print("https://www.google.com/test1 is invalid: ");
+	   testUrl = "https://www.google.com/test1";	   
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl,true,res);
 	  
    }
    
