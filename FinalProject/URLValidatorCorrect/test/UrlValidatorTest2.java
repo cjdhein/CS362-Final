@@ -21,6 +21,8 @@ public class UrlValidatorTest2 extends TestCase {
 	// (used for testing test function)
 	public boolean testSchemes = true;
 	public boolean testAuthorities = true;
+	public boolean testPaths = true;
+	public boolean testQueries = true;
 	
 	// valid schemes (currently only 3 are being used, the rest are not implemented)
 	String validSchemes[] = {
@@ -79,7 +81,7 @@ public class UrlValidatorTest2 extends TestCase {
 				"fax",
 				"feed",
 				"feedready",
-				"file",
+				"file",  
 				"filesystem",
 				"finger",
 				"fish",
@@ -1765,6 +1767,7 @@ public class UrlValidatorTest2 extends TestCase {
 		   			ResultPair UserNamePair = new ResultPair("", true);
 		   			ResultPair PasswordPair = new ResultPair("", true);
 		   		ResultPair HostPair = new ResultPair("www.google.com", true);
+		   		ResultPair PortPair = new ResultPair("", true);
 		   		
 		   		
 		   ResultPair PathPair = new ResultPair("", true);
@@ -1810,6 +1813,8 @@ public class UrlValidatorTest2 extends TestCase {
 				UserNamePair.valid = true;
 				PasswordPair.item = "";
 				PasswordPair.valid = true;
+				PortPair.item = "";
+				PortPair.valid = true;
 				
 				// generate userinfo ?
 				int genUserInfo = random.nextInt(100);
@@ -1848,14 +1853,49 @@ public class UrlValidatorTest2 extends TestCase {
 				if(genTypeHost == 1 && UserInfoPair.item.length() > 0)
 					HostPair.valid = false;
 					
-				
-				
 				AuthorityPair.item = UserInfoPair.item + HostPair.item;
 				AuthorityPair.valid = UserInfoPair.valid && HostPair.valid;
+				
+				if(random.nextBoolean() == true)
+					PortPair = generatePort();
+				
+				if(PortPair.item.length() > 0)
+				{
+					AuthorityPair.item = AuthorityPair.item + ":" + PortPair.item;
+					AuthorityPair.valid = AuthorityPair.valid && PortPair.valid;
+				}
+				
 			}
 			
+			// get path
+			if(testPaths)
+			{
+				PathPair.item = "";
+				PathPair.valid = true;
+				has_2_slashes = false;
+				
+				if(random.nextBoolean() == true)
+					PathPair = generatePath();
+				
+				if(PathPair.item.length() > 0)
+					PathPair.item = "/" + PathPair.item;
+				
+				if(PathPair.item.length() > 0 && PathPair.item.contains("//"))
+					has_2_slashes = true;
+			}
 			   
-			   
+			// get query
+			if(testQueries)
+			{
+				QueryPair.item = "";
+				QueryPair.valid = true;
+				
+				if(random.nextBoolean() == true)
+					QueryPair = generateQuery();
+				
+				if(QueryPair.item.length() > 0)
+					QueryPair.item = "?" + QueryPair.item;
+			}
 			   
 			 // build url
 			   url = SchemePair.item + AuthorityPair.item  + PathPair.item + QueryPair.item + FragmentPair.item;
@@ -1955,7 +1995,15 @@ public class UrlValidatorTest2 extends TestCase {
 	   				if(expected == SchemePair.valid)
 	   					System.out.print("SchemePair: " + Boolean.toString(SchemePair.valid));
 	   				if(expected == AuthorityPair.valid)
+	   				{
 	   					System.out.print(" AuthorityPair: " + Boolean.toString(AuthorityPair.valid));
+	   					System.out.print(" SchemePair: " + Boolean.toString(SchemePair.valid));
+	   					System.out.print(" UserInfoPair: " + Boolean.toString(UserInfoPair.valid));
+	   					System.out.print(" HostPair: " + Boolean.toString(HostPair.valid));
+	   					System.out.print(" PortPair: " + Boolean.toString(PortPair.valid));
+	   		   			
+	   		   			
+	   				}
 	   				if(expected == PathPair.valid)
 	   					System.out.print(" PathPair: " + Boolean.toString(PathPair.valid));
 	   				if(expected == QueryPair.valid)
@@ -1967,7 +2015,10 @@ public class UrlValidatorTest2 extends TestCase {
 	   				boolean boolVals[] = {has_2_slashes, has_all_schemes, has_local_url, has_fragment};
 	   				outputTestInfo(url, SchemePair, AuthorityPair, PathPair, QueryPair, FragmentPair, j, boolVals);
 	   			}
-	   			assertTrue(result == expected);
+	   			
+	   			// ignore invalid port values
+	   			if(!(result == true && PortPair.valid == false))
+	   				assertTrue(result == expected);
 	   		}	}   
 	 }
 	 public void outputTestParams(int testParams)
@@ -2326,5 +2377,94 @@ public class UrlValidatorTest2 extends TestCase {
 		   return new ResultPair(domain, domainValid);
 	   }
 	   
+	  
+	  // generate port
+	  public ResultPair generatePort()
+	  {
+		  String port = "";
+		  boolean portValid = true;
+		  
+		  int portNum = random.nextInt(80000);
+		  portNum -= 5000;
+		  
+		  if(portNum < 0 || portNum > 65535)
+			  portValid = false;
+		  
+		  port = Integer.toString(portNum);
+		  
+		  // randomly add chars
+		  if(random.nextInt(100) < 2)
+		  {
+			  for(int i = 0; i < port.length(); i++)
+			  {
+				  if(random.nextInt(100) < 20)
+				  {
+					  	port = port.substring(0, i) + randoString(uppercase + lowercase + URI_permitted_chars, 1) + port.substring(i + 1);
+					  	portValid = false;
+				  }  
+			  }
+		  }
+		  
+		  return new ResultPair(port, portValid);
+	  }
 	   
+	  // generate paths
+	  public ResultPair generatePath()
+	  {
+		  String path = "";
+		  boolean pathValid = true;
+		  
+		   int numberSegments = random.nextInt(13);
+		   
+		   for(int i = 0; i < numberSegments; i++)
+		   {
+			   path += randoString(uppercase + lowercase + numbers /*+ URI_permitted_chars /*+ ":@"*/, 30);
+		   
+			   if(random.nextInt(10) > 0)
+				   path += "/";
+		   }
+		   
+		   // path cannot start with '//' (will have / added before it)
+	//	   if(path.length() >= 1 && path.charAt(0) == '/')
+	//		   pathValid = false;
+		   if(path.length() == 1 && checkIfAllSlashes(path))
+			   pathValid = false;
+
+		   if(path.length() == 0)
+			   pathValid = true;
+ 		  
+		  return new ResultPair(path, pathValid);
+	  }
+	  
+	  public boolean checkIfAllSlashes(String str)
+	  {
+		  for(int i = 0; i < str.length(); i++)
+		  {
+			  if(str.charAt(i) != '/')
+				  return false;
+		  }
+		  return true;
+	  }
+	  
+	  
+	  // generate query
+	  public ResultPair generateQuery()
+	  {
+		  String query = "";
+		  boolean queryValid = true;
+		  
+		  String queryString = uppercase + lowercase + URI_permitted_chars + ":@/?";
+		  
+		  if(random.nextBoolean() == true)
+			  queryString = queryString + " ";
+		  
+		  query = randoString(queryString , 130);
+		
+		  if(query.contains(" "))
+			  queryValid = false;
+		  
+		  
+		  return new ResultPair(query, queryValid);
+	  }
+	  
 }
