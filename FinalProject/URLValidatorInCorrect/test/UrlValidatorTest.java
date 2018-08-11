@@ -28,7 +28,10 @@ public class UrlValidatorTest extends TestCase {
 	   
 	   // Default Schemes
 	   uv = new UrlValidator();
-	   
+
+	   // test for exception throw outside of UrlValidator
+	   //DomainValidator.clearTLDOverrides();
+
 	   testUrl = "http://www.google.com";
 	   res = uv.isValid(testUrl);
 	   assertit(testUrl,true,res);
@@ -40,6 +43,10 @@ public class UrlValidatorTest extends TestCase {
 	   testUrl = "ftp://www.google.com";	   
 	   res = uv.isValid(testUrl);
 	   assertit(testUrl,true,res);
+
+	   testUrl = "file://test.http/";
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl, true,res);	   		   
 	   
 	   testUrl = "dog";
 	   res = uv.isValid(testUrl);
@@ -55,8 +62,12 @@ public class UrlValidatorTest extends TestCase {
 	   
 	   testUrl = "http://www.66.88";
 	   res = uv.isValid(testUrl);
+
 	   assertit(testUrl, false,res);	
 	   
+
+	   assertit(testUrl, false,res);  
+	   	   
 	   // Test with all schemes
 	   uv = new UrlValidator(UrlValidator.ALLOW_ALL_SCHEMES);
 	   
@@ -71,7 +82,12 @@ public class UrlValidatorTest extends TestCase {
 	   testUrl = "ftp://www.google.com";	   
 	   res = uv.isValid(testUrl);
 	   assertit(testUrl,true,res);
+
+	   testUrl = "file://test.http/";
+	   res = uv.isValid(testUrl);
+	   assertit(testUrl, true,res);
 	   
+
 	   testUrl = "dog";
 	   res = uv.isValid(testUrl);
 	   assertit(testUrl, false,res);
