@@ -1430,7 +1430,7 @@ String validTLDs[] = { "AAA",
    public void testManualTest()
    {
 //You can use this function to implement your manual testing	   
-	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	 //  UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
 	   //Kkqmzg://ml8yuaZ1AY1Tb16bYE.jgFBsuvs6eie06eonRwIDRGGiEqMXs3uwKPveTKdCg3OPlmsDAle0jN.zLe97brpa.iO1jV-wDUW4yHDNrimsM0cHVQtAdMT60IqFadL3c.pqqc2zYe8JNPVo-JZAqZ5d5fT.bjOuFh3.EFIN6hd5eER0Q3U27IsYBXxyb2yVZBX4Wz.CHARITY
 	   boolean val = urlVal.isValid("Kkqmzg://ml8yuaZ1AY1Tb16bYE.jgFBsuvs6eie06eonRwIDRGGiEqMXs3uwKPveTKdCg3OPlmsDAle0jN.zLe97brpa.iO1jV-wDUW4yHDNrimsM0cHVQtAdMT60IqFadL3c.pqqc2zYe8JNPVo-JZAqZ5d5fT.bjOuFh3.EFIN6hd5eER0Q3U27IsYBXxyb2yVZBX4Wz.Com");
 	   //assertTrue(val);
